@@ -12,6 +12,8 @@ export class ClientUtil {
                 throw new Error("Transporter TCP requires port to be assigned");
             case Transporters.REDIS:
                 return 6379;
+            case Transporters.AMQP:
+                return 5672;
         }
     }
 

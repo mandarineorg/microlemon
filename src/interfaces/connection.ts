@@ -1,6 +1,7 @@
 export enum Transporters {
     TCP,
-    REDIS
+    REDIS,
+    AMQP
 }
 
 export interface ConnectionOptions {
