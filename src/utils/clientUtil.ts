@@ -14,6 +14,8 @@ export class ClientUtil {
                 return 6379;
             case Transporters.AMQP:
                 return 5672;
+            case Transporters.NATS:
+                return 4222;
         }
     }
 
