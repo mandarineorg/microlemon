@@ -48,7 +48,7 @@ await redisConn.exec("COMMAND", "arg1", "arg2");
 
 ## FAQ
 
-> **Does Microlemon REDIS support authentication by both username and password?
+> **Does Microlemon REDIS support authentication by both username and password?**
 >
 > Yes. Microlemon supports Redis authentication with the use of an username.
 
