@@ -148,9 +148,9 @@ export class NatsClient implements Client {
         return this.natsServerData;
     }
 
-    public exec(payload: string) {
+    public exec(execData: string) {
         if(!this.isClosed() && this.isConnected()) {
-            return NatsUtil.exec(this.getWriter(), this.getReader(), payload);
+            return NatsUtil.exec(this.getWriter(), this.getReader(), execData);
         } else {
             throw new NATSerror("Command could not be executed because connection is either closed or not established");
         }
