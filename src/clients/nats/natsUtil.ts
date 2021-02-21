@@ -26,7 +26,6 @@ export class NatsUtil {
           buf[loc++] = d;
         }
         throw new Error();
-        //return decoder.decode(b);
     }
 
     public static createRequest(payload: string) {

@@ -1,6 +1,13 @@
 import { NATSerror } from "./errors.ts";
 import { NatsClient } from "./nats.ts";
 import { NatsUtil } from "./natsUtil.ts";
+import { NatsSubscriptionResponse } from "./natsCommonInterfaces.ts";
+
+const replaceLast = (x: string, y: string, z: string) => {
+    var a = x.split("");
+    a[x.lastIndexOf(y)] = z;
+    return a.join("");
+}
 
 export class NatsSubscription {
 
@@ -9,6 +16,11 @@ export class NatsSubscription {
     constructor(private natsClient: NatsClient) {}
 
     public async subscribe(subject: string, queueGroup?: string): Promise<[string, string, boolean]> {
+        
+        if(subject.includes(" ")) {
+            throw new NATSerror("The subject of a subscription cannot contain white spaces");
+        }
+
         const clientId = this.natsClient.getNatsServerData().client_id;
         if(clientId) {
             if(queueGroup) {
@@ -43,13 +55,34 @@ export class NatsSubscription {
         }
     }
 
-    public async *receive(): AsyncIterableIterator<any> {
+    public async *receive(): AsyncIterableIterator<NatsSubscriptionResponse> {
         let forceReconnect = false;
         while (this.natsClient.isConnected()) {
           try {
-                let message: string;
+                let subsMessage: NatsSubscriptionResponse;
                 try {
-                    message = await NatsUtil.readLine(this.natsClient.getReader());
+                    const reader = async () => await NatsUtil.readLine(this.natsClient.getReader());
+                    const header = await reader();
+                    const message = await reader();
+                    const processedMessage = replaceLast(replaceLast(message, "\r", ""), "\n", "")
+                    if(header.includes("MSG")) {
+                        let cleanHeader = replaceLast(replaceLast(header, "\r", ""), "\n", "");
+                        let [, subject, sid, responseLength] = cleanHeader.split(" ");
+
+                        subsMessage = {
+                            header: {
+                                subject,
+                                sid: parseInt(sid),
+                                responseLength: parseInt(responseLength)
+                            },
+                            message: processedMessage
+                        }
+                    } else {
+                        subsMessage = {
+                            header: header,
+                            message: processedMessage
+                        }
+                    }
                 } catch (err) {
                     if (err instanceof Deno.errors.BadResource) {
                         // Connection already closed.
@@ -59,7 +92,7 @@ export class NatsSubscription {
                     throw err;
                 }
         
-                yield message;
+                yield subsMessage;
           }  finally {
             if ((!this.natsClient.isClosed() && !this.natsClient.isConnected()) || forceReconnect) {
               await this.natsClient.reconnect();

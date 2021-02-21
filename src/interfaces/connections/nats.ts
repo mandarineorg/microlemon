@@ -33,5 +33,4 @@ export interface NatsServerData {
     connect_urls: Array<string>;
     ldm?: boolean;
     client_ip: string;
-
 }

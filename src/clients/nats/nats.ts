@@ -53,7 +53,6 @@ export class NatsClient implements Client {
             this.closed = false;
             return this;
         } catch (error) {
-            console.log(error);
             this.closeConnection();
             throw error;
         } 
