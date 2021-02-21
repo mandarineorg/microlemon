@@ -1,5 +1,5 @@
 # Microlemon
-[![Leaf CI](https://github.com/mandarineorg/microlemon/workflows/Unit%20Tests/badge.svg)](https://github.com/mandarineorg/microlemon)
+[![Microlemon CI](https://github.com/mandarineorg/microlemon/workflows/Unit%20Tests/badge.svg)](https://github.com/mandarineorg/microlemon)
 
 <img src="https://www.mandarinets.org/assets/images/full-logo-simple.svg" width="180" height="180" />
 
