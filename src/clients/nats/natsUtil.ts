@@ -25,7 +25,7 @@ export class NatsUtil {
           }
           buf[loc++] = d;
         }
-        throw new Error();
+        return "";
     }
 
     public static createRequest(payload: string) {
@@ -64,6 +64,20 @@ export class NatsUtil {
 
     public static async exec(writer: BufWriter, reader: BufReader, payload: string) {
       return await this.sendCommand(writer, reader, payload);
+    }
+
+    public static getMessageTypeFromHeader(header: string): "PING" | "PONG" | "MSG" | "INFO" | "OTHER" {
+      if (header.includes("PING")) {
+        return "PING"
+      } else if(header.includes("PONG")) {
+        return "PONG"
+      } else if(header.includes("MSG")) {
+        return "MSG"
+      } else if(header.includes("INFO")) {
+        return "INFO";
+      } else {
+        return "OTHER";
+      }
     }
 
 }

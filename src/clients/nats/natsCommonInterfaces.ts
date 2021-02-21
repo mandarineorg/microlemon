@@ -4,6 +4,7 @@ export interface NatsHeaderData {
     responseLength: number;
 }
 export interface NatsSubscriptionResponse {
+    type: string;
     header: NatsHeaderData | string;
     message: string;
 }

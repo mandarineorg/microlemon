@@ -63,13 +63,17 @@ export class NatsSubscription {
                 try {
                     const reader = async () => await NatsUtil.readLine(this.natsClient.getReader());
                     const header = await reader();
-                    const message = await reader();
-                    const processedMessage = replaceLast(replaceLast(message, "\r", ""), "\n", "")
-                    if(header.includes("MSG")) {
+                    const type = NatsUtil.getMessageTypeFromHeader(header);
+
+                    if(type === "MSG") {
+                        const message = await reader();
+                        const processedMessage = replaceLast(replaceLast(message, "\r", ""), "\n", "")
+
                         let cleanHeader = replaceLast(replaceLast(header, "\r", ""), "\n", "");
                         let [, subject, sid, responseLength] = cleanHeader.split(" ");
 
                         subsMessage = {
+                            type,
                             header: {
                                 subject,
                                 sid: parseInt(sid),
@@ -79,10 +83,12 @@ export class NatsSubscription {
                         }
                     } else {
                         subsMessage = {
+                            type,
                             header: header,
-                            message: processedMessage
+                            message: ""
                         }
                     }
+
                 } catch (err) {
                     if (err instanceof Deno.errors.BadResource) {
                         // Connection already closed.

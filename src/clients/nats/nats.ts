@@ -65,8 +65,43 @@ export class NatsClient implements Client {
         }
     }
 
-    reconnect(): Promise<void> {
-        throw new Error("Method not implemented.");
+    public async reconnect(): Promise<void> {
+        if (!this.reader.peek(1)) {
+            throw new Error("Client is closed.");
+        } else {
+            try {
+                await NatsUtil.sendCommand(this.writer, this.reader, "PING");
+                this.connected = true;
+            } catch (error) {
+                let retries = 0;
+                const resolvable = new Promise((resolve, reject) => {
+                    const reconnectionInterval = setInterval(async () => {
+                        if(retries > this.getRetryAttemps()) {
+                            this.closeConnection();
+                            clearInterval(reconnectionInterval);
+                            reject(new NATSerror("Could not re-establish connection"));
+                        }
+
+                        try {
+                            this.closeConnection();
+                            await this.connect(this.getFullClientOptions());
+                            await NatsUtil.sendCommand(this.getWriter(), this.getReader(), "PING");
+                            this.connected = true;
+                            retries = 0;
+                            clearInterval(reconnectionInterval);
+                            // @ts-ignore
+                            resolve();
+                        } catch (error) {
+
+                        }
+                        finally {
+                            retries = retries + 1;
+                        }
+                    }, this.getRetryDelay());
+                });
+                await resolvable;
+            }
+        }
     }
     getGeneralOptions(): ConnectionData {
         return this.generalOptions;
