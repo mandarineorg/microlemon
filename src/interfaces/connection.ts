@@ -1,8 +1,8 @@
 export enum Transporters {
-    TCP,
-    REDIS,
-    AMQP,
-    NATS
+    TCP = "TCP",
+    REDIS = "REDI",
+    AMQP = "AMQP",
+    NATS = "NATS"
 }
 
 export interface ConnectionOptions {
