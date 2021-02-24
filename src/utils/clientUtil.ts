@@ -1,21 +1,20 @@
-import { Transporters } from "../interfaces/connection.ts";
-
-
 export const encoder = new TextEncoder();
 export const decoder = new TextDecoder();
 
 export class ClientUtil {
 
-    public static getDefaultPort(transporterType: Transporters): number {
+    public static getDefaultPort(transporterType: string): number {
         switch(transporterType) {
-            case Transporters.TCP:
+            case "TCP":
                 throw new Error("Transporter TCP requires port to be assigned");
-            case Transporters.REDIS:
+            case "REDIS":
                 return 6379;
-            case Transporters.AMQP:
+            case "AMQP":
                 return 5672;
-            case Transporters.NATS:
+            case "NATS":
                 return 4222;
+            default:
+                throw new Error("");
         }
     }
 
