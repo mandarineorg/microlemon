@@ -23,7 +23,7 @@ export class AmqpClient implements Client {
 
     private channel!: AmqpChannel;
 
-    public async connect(options: AmqpConnectionData): Promise<Client> {
+    public async connect<T = any>(options: AmqpConnectionData): Promise<any> {
         this.generalOptions = Object.assign({}, {
             transport: options.transport,
             options: {

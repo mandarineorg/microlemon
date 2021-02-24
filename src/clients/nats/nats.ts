@@ -25,7 +25,7 @@ export class NatsClient implements Client {
 
     private subscriber!: NatsSubscription;
 
-    public async connect(options: NatsConnectionData): Promise<Client> {
+    public async connect(options: NatsConnectionData): Promise<any> {
         // @ts-ignore
         options.options["verbose"] = true;
         

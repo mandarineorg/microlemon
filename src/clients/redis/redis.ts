@@ -21,7 +21,7 @@ export class RedisClient implements Client {
     // Redis
     private redisSubscription!: RedisSubscription;
 
-    public async connect(options: RedisConnection): Promise<Client> {
+    public async connect(options: RedisConnection): Promise<any> {
 
         this.generalOptions = Object.assign({}, {
             transport: options.transport,
