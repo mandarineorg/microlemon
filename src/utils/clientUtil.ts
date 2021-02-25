@@ -14,8 +14,18 @@ export class ClientUtil {
             case "NATS":
                 return 4222;
             default:
-                throw new Error("");
+                throw new Error("Default port cannot be read because transporter is not part of the built-in clients");
         }
+    }
+
+    public static resizeTypedArray(baseArrayBuffer: Uint8Array, newByteSize: number) {
+        var resizedArrayBuffer = new ArrayBuffer(newByteSize),
+            len = baseArrayBuffer.byteLength,
+            resizeLen = (len > newByteSize)? newByteSize : len;
+    
+            (new Uint8Array(resizedArrayBuffer, 0, resizeLen)).set(new Uint8Array(baseArrayBuffer, 0, resizeLen));
+    
+        return resizedArrayBuffer;
     }
 
 }
