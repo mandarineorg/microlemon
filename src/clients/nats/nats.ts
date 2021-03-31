@@ -23,7 +23,9 @@ export class NatsClient implements Client {
     // @ts-ignore
     private natsServerData!: NatsServerData = {};
 
-    public async connect(options: NatsConnectionData) {
+    private subscriber!: NatsSubscription;
+
+    public async connect(options: NatsConnectionData): Promise<any> {
         // @ts-ignore
         options.options["verbose"] = true;
         
@@ -84,7 +86,7 @@ export class NatsClient implements Client {
 
                         try {
                             this.closeConnection();
-                            await this.connect(this.getFullClientOptions());
+                            await this.connect(this.getConnectionOptions());
                             await NatsUtil.sendCommand(this.getWriter(), this.getReader(), "PING");
                             this.connected = true;
                             retries = 0;
@@ -103,10 +105,8 @@ export class NatsClient implements Client {
             }
         }
     }
-    getGeneralOptions(): ConnectionData {
-        return this.generalOptions;
-    }
-    getFullClientOptions() {
+
+    getConnectionOptions() {
         return this.fullClientOptions;
     }
     getReader(): BufReader {
@@ -125,11 +125,11 @@ export class NatsClient implements Client {
     }
 
     public getRetryAttemps(): number {
-        return this.getGeneralOptions().options.retryAttempts || 3;
+        return this.getConnectionOptions().options.retryAttempts || 3;
     }
 
     public getRetryDelay(): number {
-        return this.getGeneralOptions().options.retryDelay || 1000;
+        return this.getConnectionOptions().options.retryDelay || 1000;
     }
 
     public isConnected(): boolean {
@@ -157,7 +157,17 @@ export class NatsClient implements Client {
     }
 
     public getSubscriber(): NatsSubscription {
-        return new NatsSubscription(this);
+        if(this.subscriber === undefined) {
+            this.subscriber = new NatsSubscription(this)
+        }
+        return this.subscriber;
     }
 
+    public async *receive<T = any>(): AsyncIterableIterator<T> {
+        return this.subscriber.receive();
+    }
+
+    public getDefaultPort(): number {
+        return 4222;
+    }
 }

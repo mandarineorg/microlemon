@@ -21,7 +21,7 @@ export class RedisClient implements Client {
     // Redis
     private redisSubscription!: RedisSubscription;
 
-    public async connect(options: RedisConnection): Promise<RedisClient> {
+    public async connect(options: RedisConnection): Promise<any> {
 
         this.generalOptions = Object.assign({}, {
             transport: options.transport,
@@ -85,7 +85,7 @@ export class RedisClient implements Client {
 
                         try {
                             this.closeConnection();
-                            await this.connect(this.getFullClientOptions());
+                            await this.connect(this.getConnectionOptions());
                             await RedisUtil.sendCommand(this.getWriter(), this.getReader(), "PING");
                             this.connected = true;
                             retries = 0;
@@ -105,11 +105,7 @@ export class RedisClient implements Client {
         }
     }
 
-    public getGeneralOptions(): ConnectionData {
-        return this.generalOptions;
-    }
-
-    public getFullClientOptions(): RedisConnection {
+    public getConnectionOptions(): RedisConnection {
         return this.fullClientOptions;
     }
 
@@ -131,11 +127,11 @@ export class RedisClient implements Client {
     }
 
     public getRetryAttemps(): number {
-        return this.getGeneralOptions().options.retryAttempts || 3;
+        return this.getConnectionOptions().options.retryAttempts || 3;
     }
 
     public getRetryDelay(): number {
-        return this.getGeneralOptions().options.retryDelay || 1000;
+        return this.getConnectionOptions().options.retryDelay || 1000;
     }
 
     public isConnected(): boolean {
@@ -150,10 +146,11 @@ export class RedisClient implements Client {
         return <any> this;
     }
 
-    // RedisClient
+    public async *receive<T = any>(): AsyncIterableIterator<T> {
+        return this.getSubscriber().receive();
+    }
 
     public getSubscriber(): RedisSubscription {
-
         if(this.redisSubscription === undefined) {
             this.redisSubscription = new RedisSubscription(this);
         }
@@ -163,5 +160,9 @@ export class RedisClient implements Client {
 
     public exec(command: string, ...args: (string | number)[]): Promise<RedisRawReply> {
         return RedisUtil.sendCommand(this.getWriter(), this.getReader(), command, ...args);
+    }
+
+    public getDefaultPort(): number {
+        return 6379;
     }
 }

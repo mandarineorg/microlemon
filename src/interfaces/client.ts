@@ -2,11 +2,10 @@ import type { ConnectionData } from "./connection.ts";
 import type { BufReader, BufWriter } from "../deps.ts";
 
 export interface Client {
-    connect(options: ConnectionData): Promise<Client>;
+    connect<T = Client>(options: ConnectionData): Promise<T>;
     authenticate(data: { [prop: string]: any }): Promise<any>;
-    reconnect(): Promise<void>;
-    getGeneralOptions(): ConnectionData;
-    getFullClientOptions(): any;
+    reconnect(...args: Array<any>): Promise<void>;
+    getConnectionOptions(): ConnectionData;
     getReader(): BufReader;
     getWriter(): BufWriter;
     getConnection(): Deno.Conn;
@@ -15,5 +14,7 @@ export interface Client {
     getRetryDelay(): number;
     isConnected(): boolean;
     isClosed(): boolean;
-    getAs<T = any>(): T;
+    getSubscriber(...args: Array<any>): any;
+    receive<T = any>(...args: Array<any>): AsyncIterableIterator<T>;
+    getDefaultPort(): number;
 }

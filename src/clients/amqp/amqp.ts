@@ -5,6 +5,7 @@ import { BufReader, BufWriter } from "../../deps.ts";
 import { ClientUtil } from "../../utils/clientUtil.ts";
 import { AmqpSocket } from "./amqp/amqp_socket.ts";
 import { AmqpConnection } from "./amqp/amqp_connection.ts";
+import { AmqpChannel } from "./amqp/amqp_channel.ts";
 
 export class AmqpClient implements Client {
 
@@ -20,7 +21,9 @@ export class AmqpClient implements Client {
     private connected!: boolean;
     private closed!: boolean;
 
-    public async connect(options: AmqpConnectionData) {
+    private channel!: AmqpChannel;
+
+    public async connect<T = any>(options: AmqpConnectionData): Promise<any> {
         this.generalOptions = Object.assign({}, {
             transport: options.transport,
             options: {
@@ -73,18 +76,19 @@ export class AmqpClient implements Client {
     reconnect(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    getGeneralOptions(): ConnectionData {
-        return this.generalOptions;
-    }
-    getFullClientOptions() {
+
+    getConnectionOptions() {
         return this.fullClientOptions;
     }
+
     getReader(): BufReader {
         return this.reader;
     }
+
     getWriter(): BufWriter {
         return this.writer;
     }
+
     getConnection(): Deno.Conn {
         return this.connection;
     }
@@ -95,11 +99,11 @@ export class AmqpClient implements Client {
     }
 
     public getRetryAttemps(): number {
-        return this.getGeneralOptions().options.retryAttempts || 3;
+        return this.getConnectionOptions().options.retryAttempts || 3;
     }
 
     public getRetryDelay(): number {
-        return this.getGeneralOptions().options.retryDelay || 1000;
+        return this.getConnectionOptions().options.retryDelay || 1000;
     }
 
     public isConnected(): boolean {
@@ -114,7 +118,43 @@ export class AmqpClient implements Client {
         return <any> this;
     }
 
-    public getAmqpConnection() {
+    public getSubscriber(): AmqpConnection {
         return this.amqpConnection;
+    }
+
+    public async *receive<T = any>(queueName: string): AsyncIterableIterator<T> {
+        if(!this.channel) {
+            this.channel = await this.getSubscriber().openChannel();
+            await this.channel.declareQueue({ queue: queueName });
+        }
+
+        while(this.isConnected()) {
+            try {
+                const resolvable= new Promise<{ args: any, props: any, data: any }>((resolve, reject) => {
+                    this.channel.consume(
+                        { queue: queueName },
+                        async (args, props, data) => {
+                            try {
+                                const result = { args, props, data };
+                                await this.channel.ack({ deliveryTag: args.deliveryTag });
+                                resolve(result);
+                            } catch(error) {
+                                reject(error);
+                            }
+                        },
+                      );
+                });
+                const result: { args: any, props: any, data: any }  = await resolvable;
+                
+                // @ts-ignore
+                yield result;
+            } catch {
+                
+            }
+        }
+    }
+
+    public getDefaultPort(): number {
+        return 5672;
     }
 }
