@@ -7,10 +7,9 @@
 **Subscription**
 
 ```typescript
-import { RedisClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/redis/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const redisClient = new RedisClient();
+const redisClient = new Microlemon();
 const redisConn = await redisClient.connect({
     transport: Transporters.REDIS,
     options: {
@@ -29,10 +28,9 @@ const subscriber = await redisConn.getSubscriber().channelSubscribe("moderators"
 
 **Command execution**
 ```typescript
-import { RedisClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/redis/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const redisClient = new RedisClient();
+const redisClient = new Microlemon();
 const redisConn = await redisClient.connect({
     transport: Transporters.REDIS,
     options: {

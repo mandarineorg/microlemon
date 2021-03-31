@@ -17,4 +17,5 @@ export interface Client {
     getSubscriber(...args: Array<any>): any;
     receive<T = any>(...args: Array<any>): AsyncIterableIterator<T>;
     getDefaultPort(): number;
+    getSelectedClient?(): any;
 }

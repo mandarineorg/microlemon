@@ -14,7 +14,7 @@ Microlemon is a collection of implementation of microservices for Deno. Currentl
 - [NATS](https://nats.io/)
 
 ## Status
-The final goal of Microlemon is to have a collection of multiple microservices which would all work under the same interface & methods and while this goal is currently implemented, it is not fully integrated. This project keeps its status under construction though able to be used in both small & large projects.
+Microlemon offers a common interface to manage different communication layers. By having a common interface, the code tends to be straightforward and adaptable. While Microlemon is under construction, it is considered to be stable.
 
 --------------
 
@@ -27,7 +27,35 @@ For information about how to use **Redis** with Microlemon, [click here](https:/
 ## Nats
 For information about how to use **Nats** with Microlemon, [click here](https://github.com/mandarineorg/microlemon/blob/main/src/clients/nats/README.md)  
 
+## TCP
+For information about how to use **TCP** with Microlemon, [click here](https://github.com/mandarineorg/microlemon/blob/main/src/clients/tcp/README.md)  
+
 --------------
+
+## Adding Transporters to Internal Factory
+
+Microlemon allows you to inject implementations of the Client interface to the internal factory. You can do this by using `MicrolemonInternal`.
+
+```typescript
+import { MicrolemonInternal, Client, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
+
+class MyTransporterImpl implements Client {
+    ...
+}
+
+MicrolemonInternal.getInstance().registerTransporter("MY_TRANSPORTER_KEY", MyTransporterImpl);
+
+const microlemon = new Microlemon();
+const connection = await microlemon.connect({
+    transport: "MY_TRANSPORTER_KEY",
+    options: {
+        host: "127.0.0.1",
+        port: 9777
+    }
+});
+```
+--------------
+
 
 ## Questions
 For questions & community support, please visit our [Discord Channel](https://discord.gg/qs72byB) or join us on our [twitter](https://twitter.com/mandarinets).
