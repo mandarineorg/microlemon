@@ -6,10 +6,9 @@
 
 **Subscription**
 ```typescript
-import { NatsClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/nats/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const natsClient = new NatsClient();
+const natsClient = new Microlemon();
 const natsConnection = await natsClient.connect({
     transport: Transporters.NATS,
     options: {
@@ -29,10 +28,9 @@ const subscribe = await subscriber.subscribe("moderators"); // Subscribe moderat
 
 **Publish Message**
 ```typescript
-import { NatsClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/nats/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const natsClient = new NatsClient();
+const natsClient = new Microlemon();
 const natsConnection = await natsClient.connect({
     transport: Transporters.NATS,
     options: {
@@ -46,10 +44,9 @@ await natsConnection.getSubscriber().publish("moderators", "My message");
 
 **Command execution**
 ```typescript
-import { NatsClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/nats/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const natsClient = new NatsClient();
+const natsClient = new Microlemon();
 const natsConnection = await natsClient.connect({
     transport: Transporters.NATS,
     options: {

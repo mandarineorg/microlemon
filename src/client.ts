@@ -73,4 +73,8 @@ export class Microlemon implements Client {
         return this.selectedClient.getDefaultPort();
     }
 
+    public getSelectedClient(): any {
+        return this.selectedClient;
+    }
+
 }

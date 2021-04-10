@@ -7,12 +7,11 @@ This work is based on the excellent package of [AMQP for Deno](https://github.co
 
 **Subscription**
 ```typescript
-import { AmqpClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/amqp/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const amqpClient = new AmqpClient();
+const amqpClient = new Microlemon();
 const amqpConnection = await amqpClient.connect({
-    transport: Transporters.AMQP,
+    transport: Transporters.AMQP, // "AMQP"
     options: {
         host: "127.0.0.1",
         username: "guest",
@@ -24,29 +23,21 @@ const amqpConnection = await amqpClient.connect({
     }
 });
 
-const channel = await amqpConnection.getAmqpConnection().openChannel();
-const queueName = "my.queue";
-await channel.declareQueue({ queue: queueName });
-await channel.consume(
-  { queue: queueName },
-  async (args, props, data) => {
-    console.log(JSON.stringify(args));
-    console.log(JSON.stringify(props));
-    console.log(new TextDecoder().decode(data));
-    await channel.ack({ deliveryTag: args.deliveryTag });
-  },
-);
+(async function () {
+  for await (const data of amqpConnection.receive("myqueue")) {
+    console.log(data);
+  }
+})();
 ```
 
 
 **Publish a message**
 ```typescript
-import { AmqpClient } from "https://deno.land/x/microlemon@v1.0.0/src/clients/amqp/mod.ts";
-import { Transporters } from "https://deno.land/x/microlemon@v1.0.0/mod.ts";
+import { Transporters, Microlemon } from "https://deno.land/x/microlemon@v2.0.0/mod.ts";
 
-const amqpClient = new AmqpClient();
+const amqpClient = new Microlemon();
 const amqpConnection = await amqpClient.connect({
-    transport: Transporters.AMQP,
+    transport: Transporters.AMQP, // "AMQP"
     options: {
         host: "127.0.0.1",
         username: "guest",
@@ -58,7 +49,7 @@ const amqpConnection = await amqpClient.connect({
     }
 });
 
-const channel = await amqpConnection.getAmqpConnection().openChannel();
+const channel = await amqpConnection.getSubscriber().openChannel();
 const queueName = "my.queue";
 await channel.declareQueue({ queue: queueName });
 await channel.publish(
@@ -67,5 +58,5 @@ await channel.publish(
   new TextEncoder().encode(JSON.stringify({ foo: "bar" })),
 );
 
-await amqpConnection.getAmqpConnection().close();
+await amqpConnection.getSubscriber().close();
 ```
