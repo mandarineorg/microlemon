@@ -65,8 +65,8 @@ export class Microlemon implements Client {
         return this.selectedClient.getSubscriber(...args);
     }
 
-    public async *receive<T = any>(): AsyncIterableIterator<T> {
-        return this.selectedClient.receive<T>();
+    public async *receive<T = any>(...params: Array<any>): AsyncIterableIterator<T> {
+        return this.selectedClient.receive<T>(...params);
     }
 
     public getDefaultPort(): number {
