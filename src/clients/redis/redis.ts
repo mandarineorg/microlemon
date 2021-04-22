@@ -62,7 +62,9 @@ export class RedisClient implements Client {
         } else if (password && username) {
             return RedisUtil.sendCommand(this.writer, this.reader, "AUTH", username, password);
         } else {
-            throw new Error();
+            // Does not need authentication
+            // @ts-ignore
+            return null;
         }
     }
 
