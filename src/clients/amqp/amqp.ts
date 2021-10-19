@@ -3,9 +3,8 @@ import { ConnectionData } from "../../interfaces/connection.ts";
 import { AmqpConnectionData } from "../../interfaces/connections/amqp.ts";
 import { BufReader, BufWriter } from "../../deps.ts";
 import { ClientUtil } from "../../utils/clientUtil.ts";
-import { AmqpSocket } from "./amqp/amqp_socket.ts";
-import { AmqpConnection } from "./amqp/amqp_connection.ts";
-import { AmqpChannel } from "./amqp/amqp_channel.ts";
+import { AmqpConnection, AmqpChannel } from "https://deno.land/x/amqp@v0.17.0/mod.ts";
+import { AmqpSocket } from "https://deno.land/x/amqp@v0.17.0/src/amqp_socket.ts";
 
 export class AmqpClient implements Client {
 

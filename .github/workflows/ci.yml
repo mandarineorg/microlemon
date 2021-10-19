@@ -9,9 +9,16 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macOS-latest]
-        deno: ["v1.8.2"]
+        deno: ["v1.15.2"]
       fail-fast: true
     steps:
+      - uses: getong/rabbitmq-action@v1.2
+        with:
+          rabbitmq version: '3.8.2-management-alpine'
+          host port: 5672
+          rabbitmq user: 'root'
+          rabbitmq password: 'password'
+          rabbitmq vhost: '/'
       - uses: actions/checkout@v2
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
