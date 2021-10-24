@@ -22,4 +22,4 @@ await channel.publish(
   new TextEncoder().encode(JSON.stringify({ foo: "bars" })),
 );
 await lol.getSubscriber().close();
-console.log("sent");
+Deno.exit(0);
