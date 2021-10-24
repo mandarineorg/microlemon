@@ -29,4 +29,4 @@ jobs:
       - name: run tests
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-        run: deno test --reload --allow-all --unstable
+        run: deno test --allow-all --unstable tests/amqp-test.ts
