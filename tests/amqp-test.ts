@@ -19,6 +19,7 @@ Deno.test({
         Deno.sleepSync(2500);
 
         runReceiver.close();
+        runSender.close();
         const finalReceiver = await runReceiver.output();
         const finalSender = await runSender.output();
 
