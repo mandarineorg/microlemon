@@ -1945,9 +1945,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'connection'",
-          );
+          throwUnknownMethod(method, 'connection');
       }
       break;
     }
@@ -1990,9 +1988,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'channel'",
-          );
+          throwUnknownMethod(method, 'channel');
       }
       break;
     }
@@ -2034,9 +2030,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'access'",
-          );
+          throwUnknownMethod(method, 'access');
       }
       break;
     }
@@ -2152,9 +2146,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'exchange'",
-          );
+          throwUnknownMethod(method, 'exchange');
       }
       break;
     }
@@ -2301,9 +2293,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'queue'",
-          );
+          throwUnknownMethod(method, 'queue');
       }
       break;
     }
@@ -2518,9 +2508,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'basic'",
-          );
+          throwUnknownMethod(method, 'basic');
       }
       break;
     }
@@ -2546,9 +2534,7 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'tx'",
-          );
+          throwUnknownMethod(method, 'tx');
       }
       break;
     }
@@ -2566,15 +2552,13 @@ export function encodeMethod(method: SendMethod): Uint8Array {
           break;
 
         default:
-          throw new Error(
-            "Unknown method " + method!.methodId + " for class 'confirm'",
-          );
+          throwUnknownMethod(method, 'confirm');
       }
       break;
     }
 
     default:
-      throw new Error("Unknown class " + method!.classId);
+      throwUnknownClass(method);
   }
   return encoder.result();
 }
@@ -2765,8 +2749,15 @@ export function encodeHeader(header: Header): Uint8Array {
 
       break;
     default:
-      throw new Error("Unknown class " + header!.classId);
+      throwUnknownClass(header);
   }
 
   return encoder.result();
+}
+
+const throwUnknownClass = (header:any) => {
+  throw new Error(`Unknown class  ${ header!.classId}`);
+}
+const throwUnknownMethod = (method:any, className:string) => {
+  throw new Error(`Unknown method ${method!.methodId } for class '${className}'`);
 }
